@@ -1,6 +1,6 @@
 ##  Melhorias Planejadas  
 - **Botão de Mute**:  
-  - Análise de Impacto (CII/CCI): [Link para Issue #X](link-da-issue). 
+  - Análise de Impacto (CII/CCI): [Link para Issue #X](https://github.com/arthurkonzen/tetris-master/issues/1). 
 
 # tetris - Just another Tetris™ clone ![alt tag](src/main/resources/img/icons/icon.png)
 
