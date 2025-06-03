@@ -40,6 +40,9 @@ import spypunk.tetris.model.TetrisInstance;
 public class TetrisServiceImpl implements TetrisService {
 
     private static final int ROWS_PER_LEVEL = 10;
+    private static final int LEVEL_THRESHOLD_FOR_MINIMUM_SPEED = 29;
+    private static final int MINIMUM_SPEED = 1;
+
 
     private final ShapeFactory shapeFactory;
 
@@ -158,13 +161,18 @@ public class TetrisServiceImpl implements TetrisService {
         }
     }
 
+    // NOVO MÉTODO PRIVADO
+    private void addCurrentShapeBlocksToGrid() {
+        tetris.getCurrentShape().getBlocks()
+            .forEach(block -> tetris.getBlocks().put(block.getLocation(), block));
+    }
+
     private void checkShapeLocked() {
         if (canShapeMove(Movement.DOWN)) {
             return;
         }
 
-        tetris.getCurrentShape().getBlocks()
-                .forEach(block -> tetris.getBlocks().put(block.getLocation(), block));
+        addCurrentShapeBlocksToGrid(); // USA O NOVO MÉTODO
 
         if (isGameOver()) {
             tetris.setState(State.GAME_OVER);
@@ -208,29 +216,33 @@ public class TetrisServiceImpl implements TetrisService {
         final List<Integer> completeRows = IntStream.range(0, HEIGHT)
                 .filter(this::isRowComplete).boxed().collect(Collectors.toList());
 
-        final int completedRows = completeRows.size();
+        final int completedRowsCount = completeRows.size();
 
-        if (completedRows == 0) {
+        if (completedRowsCount == 0) {
             return;
         }
 
         completeRows.forEach(this::clearCompleteRow);
 
-        tetris.setCompletedRows(tetris.getCompletedRows() + completedRows);
+        tetris.setCompletedRows(tetris.getCompletedRows() + completedRowsCount);
 
-        updateScoreWithCompletedRows(completedRows);
+        updateScoreWithCompletedRows(completedRowsCount);
         updateLevel();
 
         tetris.getTetrisEvents().add(TetrisEvent.ROWS_COMPLETED);
     }
 
+    private boolean hasReachedNextLevelThreshold(int completedRows, int nextLevelCandidate) {
+        return completedRows >= ROWS_PER_LEVEL * nextLevelCandidate;
+    }
+
     private void updateLevel() {
         final int completedRows = tetris.getCompletedRows();
-        final int nextLevel = tetris.getLevel() + 1;
+        final int nextLevelCandidate = tetris.getLevel() + 1;
 
-        if (completedRows >= ROWS_PER_LEVEL * nextLevel) {
-            tetris.setLevel(nextLevel);
-            tetris.setSpeed(getLevelSpeed(nextLevel));
+        if (hasReachedNextLevelThreshold(completedRows, nextLevelCandidate)) {
+            tetris.setLevel(nextLevelCandidate);
+            tetris.setSpeed(getLevelSpeed(nextLevelCandidate));
         }
     }
 
@@ -320,13 +332,14 @@ public class TetrisServiceImpl implements TetrisService {
         IntStream.range(10, 13).forEach(level -> levelSpeeds.put(level, 5));
         IntStream.range(13, 16).forEach(level -> levelSpeeds.put(level, 4));
         IntStream.range(16, 19).forEach(level -> levelSpeeds.put(level, 3));
-        IntStream.range(19, 29).forEach(level -> levelSpeeds.put(level, 2));
+        IntStream.range(19, LEVEL_THRESHOLD_FOR_MINIMUM_SPEED).forEach(level -> levelSpeeds.put(level, 2));
+
 
         return levelSpeeds;
     }
 
     private int getLevelSpeed(final int level) {
-        return level < 29 ? levelSpeeds.get(level) : 1;
+        return level < LEVEL_THRESHOLD_FOR_MINIMUM_SPEED ? levelSpeeds.get(level) : MINIMUM_SPEED;
     }
 
     private boolean isMovementAllowed() {

@@ -1,0 +1,4 @@
+@echo off
+title Tetris
+java --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED -jar target\tetris.jar
+pause
