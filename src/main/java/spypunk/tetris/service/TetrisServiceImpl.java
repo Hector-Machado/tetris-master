@@ -131,14 +131,19 @@ public class TetrisServiceImpl implements TetrisService {
         tetris.setCurrentGravityFrame(tetris.getCurrentGravityFrame() + 1);
     }
 
+    // NOVO MÉTODO PRIVADO (Refatoração 4)
+    private Optional<Movement> getEffectiveMovement() {
+        return tetris.isHardDropEnabled()
+                ? Optional.of(Movement.DOWN)
+                : tetris.getMovement();
+    }
+
     private void applyMovement() {
         if (!isMovementAllowed()) {
             return;
         }
 
-        final Optional<Movement> optionalMovement = tetris.isHardDropEnabled()
-                ? Optional.of(Movement.DOWN)
-                : tetris.getMovement();
+        final Optional<Movement> optionalMovement = getEffectiveMovement(); // USA O NOVO MÉTODO
 
         if (optionalMovement.isPresent()) {
             final Movement movement = optionalMovement.get();
@@ -161,7 +166,6 @@ public class TetrisServiceImpl implements TetrisService {
         }
     }
 
-    // NOVO MÉTODO PRIVADO
     private void addCurrentShapeBlocksToGrid() {
         tetris.getCurrentShape().getBlocks()
             .forEach(block -> tetris.getBlocks().put(block.getLocation(), block));
@@ -172,7 +176,7 @@ public class TetrisServiceImpl implements TetrisService {
             return;
         }
 
-        addCurrentShapeBlocksToGrid(); // USA O NOVO MÉTODO
+        addCurrentShapeBlocksToGrid();
 
         if (isGameOver()) {
             tetris.setState(State.GAME_OVER);
