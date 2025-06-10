@@ -1,4 +1,10 @@
-// Caminho do arquivo: spypunk/tetris/ui/controller/command/cache/TetrisControllerCommandCacheImpl.java
+/*
+ * Copyright © 2016-2017 spypunk <spypunk@gmail.com>
+ *
+ * This work is free. You can redistribute it and/or modify it under the
+ * terms of the Do What The Fuck You Want To Public License, Version 2,
+ * as published by Sam Hocevar. See the COPYING file for more details.
+ */
 
 package spypunk.tetris.ui.controller.command.cache;
 
@@ -58,8 +64,6 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
         tetrisControllerCommands.put(TetrisControllerCommandType.SHAPE_LOCKED, createShapeLockedCommand());
         tetrisControllerCommands.put(TetrisControllerCommandType.GAME_OVER, createGameOverCommand());
         tetrisControllerCommands.put(TetrisControllerCommandType.ROWS_COMPLETED, createRowsCompletedCommand());
-        
-        // ADICIONE ESTA NOVA LINHA
         tetrisControllerCommands.put(TetrisControllerCommandType.TOGGLE_MUSIC_MUTE, createToggleMusicMuteCommand());
     }
 
@@ -84,16 +88,19 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
         };
     }
 
+    // -> MÉTODO MODIFICADO AQUI
     private TetrisControllerCommand createPauseCommand() {
         return () -> {
-            tetrisService.pause();
+            final State currentState = tetris.getState();
 
-            final State state = tetris.getState();
-
-            if (State.PAUSED.equals(state)) {
+            if (State.RUNNING.equals(currentState)) {
+                // Pausa o jogo normalmente
+                tetrisService.pause();
                 soundService.pauseMusic();
-            } else if (State.RUNNING.equals(state)) {
-                soundService.resumeMusic();
+            } else if (State.PAUSED.equals(currentState)) {
+                // Prepara para a contagem regressiva ao despausar
+                tetris.setBeepsPlayed(0); // Zera nosso contador de bipes
+                tetris.setState(State.COUNTDOWN); // Muda o estado para contagem
             }
         };
     }
@@ -137,7 +144,6 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
         return tetrisService::hardDrop;
     }
 
-    // ADICIONE ESTE NOVO MÉTODO
     private TetrisControllerCommand createToggleMusicMuteCommand() {
         return soundService::toggleMusicMute;
     }

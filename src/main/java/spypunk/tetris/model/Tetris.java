@@ -32,6 +32,7 @@ public class Tetris {
                 return RUNNING;
             }
         },
+        COUNTDOWN,
         GAME_OVER;
 
         public State onPause() {
@@ -40,20 +41,15 @@ public class Tetris {
     }
 
     private final String name;
-
     private final String version;
-
     private final URI projectURI;
-
     private TetrisInstance tetrisInstance;
-
     private boolean muted;
 
     public Tetris(final String name, final String version, final URI projectURI) {
         this.name = name;
         this.version = version;
         this.projectURI = projectURI;
-
         tetrisInstance = new TetrisInstance();
     }
 
@@ -185,7 +181,18 @@ public class Tetris {
         tetrisInstance.setState(state);
     }
 
+
+
     public List<TetrisEvent> getTetrisEvents() {
         return tetrisInstance.getTetrisEvents();
+    }
+    
+    // -> MÉTODOS ADICIONADOS AQUI PARA CORRIGIR O ERRO
+    public int getBeepsPlayed() {
+        return tetrisInstance.getBeepsPlayed();
+    }
+
+    public void setBeepsPlayed(final int beepsPlayed) {
+        tetrisInstance.setBeepsPlayed(beepsPlayed);
     }
 }

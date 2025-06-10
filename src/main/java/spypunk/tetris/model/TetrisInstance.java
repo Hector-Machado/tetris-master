@@ -54,6 +54,8 @@ public class TetrisInstance {
 
     private boolean hardDropEnabled;
 
+    private int beepsPlayed; // <-- 1. VARIÁVEL ADICIONADA
+
     public TetrisInstance() {
         statistics = Arrays.asList(ShapeType.values()).stream()
                 .collect(Collectors.toMap(Function.identity(), shapeType -> 0));
@@ -165,5 +167,14 @@ public class TetrisInstance {
 
     public List<TetrisEvent> getTetrisEvents() {
         return tetrisEvents;
+    }
+
+    // -> 2. MÉTODOS DE ACESSO ADICIONADOS
+    public int getBeepsPlayed() {
+        return beepsPlayed;
+    }
+
+    public void setBeepsPlayed(final int beepsPlayed) {
+        this.beepsPlayed = beepsPlayed;
     }
 }
