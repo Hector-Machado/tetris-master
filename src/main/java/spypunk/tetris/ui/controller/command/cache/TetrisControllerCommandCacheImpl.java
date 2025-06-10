@@ -1,10 +1,4 @@
-/*
- * Copyright © 2016-2017 spypunk <spypunk@gmail.com>
- *
- * This work is free. You can redistribute it and/or modify it under the
- * terms of the Do What The Fuck You Want To Public License, Version 2,
- * as published by Sam Hocevar. See the COPYING file for more details.
- */
+// Caminho do arquivo: spypunk/tetris/ui/controller/command/cache/TetrisControllerCommandCacheImpl.java
 
 package spypunk.tetris.ui.controller.command.cache;
 
@@ -64,6 +58,9 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
         tetrisControllerCommands.put(TetrisControllerCommandType.SHAPE_LOCKED, createShapeLockedCommand());
         tetrisControllerCommands.put(TetrisControllerCommandType.GAME_OVER, createGameOverCommand());
         tetrisControllerCommands.put(TetrisControllerCommandType.ROWS_COMPLETED, createRowsCompletedCommand());
+        
+        // ADICIONE ESTA NOVA LINHA
+        tetrisControllerCommands.put(TetrisControllerCommandType.TOGGLE_MUSIC_MUTE, createToggleMusicMuteCommand());
     }
 
     @Override
@@ -75,8 +72,15 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
 
     private TetrisControllerCommand createNewGameCommand() {
         return () -> {
-            tetrisService.start();
-            soundService.playMusic(Sound.BACKGROUND);
+            final State currentState = tetris.getState();
+
+            if (State.STOPPED.equals(currentState)) {
+                tetrisService.start();
+                soundService.playMusic(Sound.BACKGROUND);
+            } else {
+                tetrisService.returnToMenu();
+                soundService.stopMusic();
+            }
         };
     }
 
@@ -131,6 +135,11 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
 
     private TetrisControllerCommand createHardDropCommand() {
         return tetrisService::hardDrop;
+    }
+
+    // ADICIONE ESTE NOVO MÉTODO
+    private TetrisControllerCommand createToggleMusicMuteCommand() {
+        return soundService::toggleMusicMute;
     }
 
     private TetrisControllerCommand createOpenProjectURLCommand() {

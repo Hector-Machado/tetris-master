@@ -101,7 +101,12 @@ public class TetrisServiceImpl implements TetrisService {
     public void mute() {
         tetris.setMuted(!tetris.isMuted());
     }
-
+ @Override
+    public void returnToMenu() {
+        // Criar uma nova instância do jogo efetivamente reseta tudo para o estado inicial (parado/menu)
+        tetris.setTetrisInstance(new TetrisInstance());
+    }
+    
     private void applyGravity() {
         if (!isTetrisRunning()) {
             return;

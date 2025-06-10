@@ -1,10 +1,4 @@
-/*
- * Copyright © 2016-2017 spypunk <spypunk@gmail.com>
- *
- * This work is free. You can redistribute it and/or modify it under the
- * terms of the Do What The Fuck You Want To Public License, Version 2,
- * as published by Sam Hocevar. See the COPYING file for more details.
- */
+// Caminho: spypunk/tetris/sound/service/SoundServiceImpl.java
 
 package spypunk.tetris.sound.service;
 
@@ -22,6 +16,9 @@ public class SoundServiceImpl implements SoundService {
 
     private SoundClip currentMusicSoundClip;
 
+    // -> 1. NOSSA NOVA VARIÁVEL DE CONTROLE
+    private boolean isMusicMuted;
+
     @Inject
     public SoundServiceImpl(final SoundClipCache soundClipCache) {
         this.soundClipCache = soundClipCache;
@@ -33,7 +30,10 @@ public class SoundServiceImpl implements SoundService {
 
         currentMusicSoundClip = soundClipCache.getSoundClip(sound);
 
-        currentMusicSoundClip.play();
+        // -> 2. CONDIÇÃO ADICIONADA: SÓ TOCA A MÚSICA SE ELA NÃO ESTIVER MUTADA
+        if (!isMusicMuted) {
+            currentMusicSoundClip.play();
+        }
     }
 
     @Override
@@ -45,7 +45,8 @@ public class SoundServiceImpl implements SoundService {
 
     @Override
     public void resumeMusic() {
-        if (currentMusicSoundClip != null) {
+        // -> 3. CONDIÇÃO ADICIONADA: SÓ RETOMA A MÚSICA SE ELA NÃO ESTIVER MUTADA
+        if (currentMusicSoundClip != null && !isMusicMuted) {
             currentMusicSoundClip.play();
         }
     }
@@ -68,7 +69,24 @@ public class SoundServiceImpl implements SoundService {
 
     @Override
     public void setMuted(final boolean muted) {
+        // O mute geral (tecla M) continua funcionando da mesma forma
         soundClipCache.getAllSoundClips().forEach(soundClip -> soundClip.setMuted(muted));
+    }
+    
+    // -> 4. NOSSO NOVO MÉTODO COM A LÓGICA CORRETA
+    @Override
+    public void toggleMusicMute() {
+        // Inverte o estado do mute da música
+        this.isMusicMuted = !this.isMusicMuted;
+
+        if (this.isMusicMuted) {
+            // Se acabamos de mutar, paramos a música atual
+            stopMusic();
+        } else {
+            // Se acabamos de desmutar, a música voltará a tocar
+            // na próxima vez que uma ação do jogo chamar playMusic()
+            // (ex: iniciar um novo jogo).
+        }
     }
 
     @Override

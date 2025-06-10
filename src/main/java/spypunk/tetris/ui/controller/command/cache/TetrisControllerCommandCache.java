@@ -26,7 +26,8 @@ public interface TetrisControllerCommandCache {
         OPEN_PROJECT_URL,
         SHAPE_LOCKED,
         GAME_OVER,
-        ROWS_COMPLETED
+        ROWS_COMPLETED,
+        TOGGLE_MUSIC_MUTE;
     }
 
     TetrisControllerCommand getTetrisControllerCommand(TetrisControllerCommandType tetrisControllerCommandType);
