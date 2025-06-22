@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import spypunk.tetris.model.ShapeType;
 import spypunk.tetris.model.Tetris;
+import spypunk.tetris.model.Tetris.State; // Importando o State
 import spypunk.tetris.ui.cache.ImageCache;
 import spypunk.tetris.ui.font.cache.FontCache;
 import spypunk.tetris.ui.util.SwingUtils;
@@ -27,21 +28,14 @@ import spypunk.tetris.ui.util.SwingUtils.Text;
 public class TetrisStatisticsView extends AbstractTetrisView {
 
     private static final String STATISTICS = "STATISTICS";
-
     private final Rectangle statisticsRectangle;
-
     private final List<TetrisStatistic> tetrisStatistics;
-
     private final Text statisticsTitleText;
 
     private class TetrisStatistic {
-
         private final Image image;
-
         private final Rectangle imageRectangle;
-
         private final Rectangle textRectangle;
-
         private final ShapeType shapeType;
 
         TetrisStatistic(final Image image, final Rectangle imageRectangle,
@@ -55,11 +49,8 @@ public class TetrisStatisticsView extends AbstractTetrisView {
 
         public void render(final Graphics2D graphics) {
             final String value = String.valueOf(tetris.getStatistics().get(shapeType));
-
             SwingUtils.drawImage(graphics, image, imageRectangle);
-
             final Text statisticText = new Text(value, fontCache.getDefaultFont());
-
             SwingUtils.renderCenteredText(graphics, textRectangle, statisticText);
         }
     }
@@ -82,25 +73,26 @@ public class TetrisStatisticsView extends AbstractTetrisView {
 
     private TetrisStatistic createTetrisStatistic(final ImageCache imageCache, final ShapeType shapeType) {
         final Image shapeImage = imageCache.getShapeImage(shapeType);
-
         final Rectangle imageContainerRectangle = new Rectangle(statisticsRectangle.x,
                 statisticsRectangle.y + shapeType.ordinal() * 2 * BLOCK_SIZE + BLOCK_SIZE,
                 statisticsRectangle.width / 2, BLOCK_SIZE);
-
         final Rectangle imageRectangle = SwingUtils.getCenteredImageRectangle(shapeImage, imageContainerRectangle, 0.5);
-
         final Rectangle textRectangle = new Rectangle(
                 statisticsRectangle.x + imageContainerRectangle.width,
                 imageContainerRectangle.y, imageContainerRectangle.width, imageContainerRectangle.height);
-
         return new TetrisStatistic(shapeImage, imageRectangle,
                 textRectangle, shapeType);
     }
 
     @Override
     protected void doPaint(final Graphics2D graphics) {
-        SwingUtils.drawRectangleWithTitle(graphics, statisticsRectangle, statisticsTitleText);
+        // -> CORREÇÃO APLICADA AQUI
+        // Se estiver na tela de controles, não desenha nada neste painel
+        if (State.CONTROLS.equals(tetris.getState())) {
+            return;
+        }
 
+        SwingUtils.drawRectangleWithTitle(graphics, statisticsRectangle, statisticsTitleText);
         tetrisStatistics.forEach(tetrisStatistic -> tetrisStatistic.render(graphics));
     }
 }

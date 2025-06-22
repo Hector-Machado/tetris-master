@@ -1,4 +1,10 @@
-// Caminho do arquivo: spypunk/tetris/ui/controller/input/TetrisControllerInputHandlerImpl.java
+/*
+ * Copyright © 2016-2017 spypunk <spypunk@gmail.com>
+ *
+ * This work is free. You can redistribute it and/or modify it under the
+ * terms of the Do What The Fuck You Want To Public License, Version 2,
+ * as published by Sam Hocevar. See the COPYING file for more details.
+ */
 
 package spypunk.tetris.ui.controller.input;
 
@@ -39,9 +45,11 @@ public class TetrisControllerInputHandlerImpl implements TetrisControllerInputHa
         releasedKeyEventCommandTypes.put(KeyEvent.VK_SPACE, TetrisControllerCommandType.NEW_GAME);
         releasedKeyEventCommandTypes.put(KeyEvent.VK_P, TetrisControllerCommandType.PAUSE);
         releasedKeyEventCommandTypes.put(KeyEvent.VK_M, TetrisControllerCommandType.MUTE);
-
-        // ADICIONE ESTA NOVA LINHA PARA O MUTE DA MÚSICA
         releasedKeyEventCommandTypes.put(KeyEvent.VK_N, TetrisControllerCommandType.TOGGLE_MUSIC_MUTE);
+
+        // -> ADICIONANDO AS NOVAS TECLAS PARA A TELA DE CONTROLES
+        releasedKeyEventCommandTypes.put(KeyEvent.VK_C, TetrisControllerCommandType.SHOW_CONTROLS);
+        releasedKeyEventCommandTypes.put(KeyEvent.VK_ESCAPE, TetrisControllerCommandType.SHOW_CONTROLS);
 
         releasedKeyEventCommandTypes.put(KeyEvent.VK_PAGE_UP, TetrisControllerCommandType.INCREASE_VOLUME);
         releasedKeyEventCommandTypes.put(KeyEvent.VK_PAGE_DOWN, TetrisControllerCommandType.DECREASE_VOLUME);

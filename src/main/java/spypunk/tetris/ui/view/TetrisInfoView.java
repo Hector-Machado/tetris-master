@@ -31,34 +31,24 @@ import spypunk.tetris.ui.util.SwingUtils.Text;
 public class TetrisInfoView extends AbstractTetrisView {
 
     private static final int VIEW_HEIGHT = 1 + BLOCK_SIZE * 16;
-
     private static final int VIEW_WIDTH = 1 + BLOCK_SIZE * 6;
-
     private static final String SCORE = "SCORE";
-
     private static final String LEVEL = "LEVEL";
-
     private static final String NEXT_SHAPE = "NEXT";
-
     private static final String ROWS = "ROWS";
 
     private final ValueTetrisInfo rowsTetrisInfo;
-
     private final ValueTetrisInfo scoreTetrisInfo;
-
     private final ValueTetrisInfo levelTetrisInfo;
-
     private final NextShapeTetrisInfo nextShapeTetrisInfo;
 
     private abstract class TetrisInfo {
 
         protected final Rectangle rectangle;
-
         private final Text titleText;
 
         TetrisInfo(final Rectangle rectangle, final String title) {
             this.rectangle = rectangle;
-
             titleText = new Text(title, fontCache.getDefaultFont());
         }
 
@@ -75,9 +65,7 @@ public class TetrisInfoView extends AbstractTetrisView {
 
         public void render(final Graphics2D graphics, final int value) {
             super.render(graphics);
-
             final Text valueText = new Text(String.valueOf(value), fontCache.getDefaultFont());
-
             SwingUtils.renderCenteredText(graphics, rectangle, valueText);
         }
     }
@@ -88,7 +76,6 @@ public class TetrisInfoView extends AbstractTetrisView {
 
         NextShapeTetrisInfo() {
             super(new Rectangle(0, BLOCK_SIZE * 12, BLOCK_SIZE * 6, BLOCK_SIZE * 6), NEXT_SHAPE);
-
             shapeTypeImageRectangles = Arrays.asList(ShapeType.values())
                     .stream()
                     .collect(Collectors.toMap(Function.identity(), this::createShapeTypeImageRectangle));
@@ -97,22 +84,20 @@ public class TetrisInfoView extends AbstractTetrisView {
         @Override
         public void render(final Graphics2D graphics) {
             super.render(graphics);
-
             final State tetrisState = tetris.getState();
 
-            if (tetrisState.equals(State.STOPPED)) {
+            // -> CORREÇÃO 1: Adicionando o novo estado aqui
+            if (tetrisState.equals(State.STOPPED) || tetrisState.equals(State.CONTROLS)) {
                 return;
             }
 
             final ShapeType shapeType = tetris.getNextShape().getShapeType();
             final Pair<Image, Rectangle> shapeTypeImageRectangle = shapeTypeImageRectangles.get(shapeType);
-
             SwingUtils.drawImage(graphics, shapeTypeImageRectangle.getLeft(), shapeTypeImageRectangle.getRight());
         }
 
         private Pair<Image, Rectangle> createShapeTypeImageRectangle(final ShapeType shapeType) {
             final Image shapeTypeImage = imageCache.getShapeImage(shapeType);
-
             return Pair.of(shapeTypeImage, SwingUtils.getCenteredImageRectangle(shapeTypeImage, rectangle));
         }
     }
@@ -135,6 +120,11 @@ public class TetrisInfoView extends AbstractTetrisView {
 
     @Override
     protected void doPaint(final Graphics2D graphics) {
+        // -> CORREÇÃO 2: Adicionando uma verificação geral para a tela de controles
+        if (State.CONTROLS.equals(tetris.getState())) {
+            return;
+        }
+
         levelTetrisInfo.render(graphics, tetris.getLevel());
         scoreTetrisInfo.render(graphics, tetris.getScore());
         rowsTetrisInfo.render(graphics, tetris.getCompletedRows());

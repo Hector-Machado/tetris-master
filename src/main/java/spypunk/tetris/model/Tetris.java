@@ -33,6 +33,7 @@ public class Tetris {
             }
         },
         COUNTDOWN,
+        CONTROLS, // <-- ADICIONADO AQUI
         GAME_OVER;
 
         public State onPause() {
@@ -173,6 +174,8 @@ public class Tetris {
         tetrisInstance.setHardDropEnabled(hardDropEnabled);
     }
 
+
+
     public State getState() {
         return tetrisInstance.getState();
     }
@@ -181,13 +184,10 @@ public class Tetris {
         tetrisInstance.setState(state);
     }
 
-
-
     public List<TetrisEvent> getTetrisEvents() {
         return tetrisInstance.getTetrisEvents();
     }
     
-    // -> MÉTODOS ADICIONADOS AQUI PARA CORRIGIR O ERRO
     public int getBeepsPlayed() {
         return tetrisInstance.getBeepsPlayed();
     }

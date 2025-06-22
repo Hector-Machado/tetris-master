@@ -11,6 +11,8 @@ package spypunk.tetris.ui.view;
 import static spypunk.tetris.ui.constants.TetrisUIConstants.BLOCK_SIZE;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
@@ -29,19 +31,15 @@ import spypunk.tetris.ui.util.SwingUtils.Text;
 public class TetrisGridView extends AbstractTetrisView {
 
     private static final String PAUSE = "PAUSE";
-
     private static final Color NOT_RUNNING_FG_COLOR = new Color(30, 30, 30, 200);
-
     private static final String GAME_OVER = "GAME OVER";
-
     private static final String PRESS_SPACE = "PRESS SPACE";
+    private static final String PRESS_C_FOR_CONTROLS = "PRESS C FOR CONTROLS";
 
     private final Rectangle gridRectangle;
 
     private final Text tetrisStoppedText;
-
     private final Text tetrisGameOverText;
-
     private final Text tetrisPausedText;
 
     public TetrisGridView(final FontCache fontCache,
@@ -63,13 +61,26 @@ public class TetrisGridView extends AbstractTetrisView {
     protected void doPaint(final Graphics2D graphics) {
         final State tetrisState = tetris.getState();
 
-        if (tetrisState.equals(State.STOPPED)) {
-            SwingUtils.renderCenteredText(graphics, gridRectangle, tetrisStoppedText);
+        if (State.STOPPED.equals(tetrisState)) {
+            graphics.setColor(Color.WHITE);
+            graphics.setFont(fontCache.getBiggerFont());
+            drawCenteredText(graphics, PRESS_SPACE, getComponent().getHeight() / 2 - 20);
+
+            graphics.setFont(new Font("Monospaced", Font.BOLD, 18));
+            drawCenteredText(graphics, PRESS_C_FOR_CONTROLS, getComponent().getHeight() / 2 + 30);
+            return;
+        }
+
+        if (State.CONTROLS.equals(tetrisState)) {
+            renderControlsScreen(graphics);
             return;
         }
 
         tetris.getBlocks().values().forEach(block -> renderBlock(graphics, block));
-        tetris.getCurrentShape().getBlocks().forEach(block -> renderBlock(graphics, block));
+
+        if (tetris.getCurrentShape() != null) {
+            tetris.getCurrentShape().getBlocks().forEach(block -> renderBlock(graphics, block));
+        }
 
         if (!State.RUNNING.equals(tetrisState)) {
             renderTetrisNotRunning(graphics, tetrisState);
@@ -89,9 +100,62 @@ public class TetrisGridView extends AbstractTetrisView {
     private void renderTetrisNotRunning(final Graphics2D graphics, final State state) {
         graphics.setColor(NOT_RUNNING_FG_COLOR);
         graphics.fillRect(gridRectangle.x, gridRectangle.y, gridRectangle.width,
-            gridRectangle.height);
+                gridRectangle.height);
+
+        if (State.COUNTDOWN.equals(state)) {
+            return;
+        }
 
         SwingUtils.renderCenteredText(graphics, gridRectangle,
-            State.GAME_OVER.equals(state) ? tetrisGameOverText : tetrisPausedText);
+                State.GAME_OVER.equals(state) ? tetrisGameOverText : tetrisPausedText);
+    }
+
+    private void drawCenteredText(final Graphics2D graphics, final String text, final int y) {
+        final FontMetrics fontMetrics = graphics.getFontMetrics();
+        final int x = (getComponent().getWidth() - fontMetrics.stringWidth(text)) / 2;
+        graphics.drawString(text, x, y);
+    }
+
+    private void renderControlsScreen(final Graphics2D graphics) {
+        graphics.setColor(Color.WHITE);
+
+        final Font titleFont = fontCache.getBiggerFont().deriveFont(48f);
+        final Font regularFont = new Font("Monospaced", Font.PLAIN, 18); // Fonte um pouco menor para caber
+        final Font boldFont = new Font("Monospaced", Font.BOLD, 18);
+
+        graphics.setFont(titleFont);
+        drawCenteredText(graphics, "CONTROLS", 100);
+
+        graphics.setFont(regularFont);
+        
+        final int startY = 180;
+        final int lineHeight = 28;
+        // -> COORDENADAS AJUSTADAS AQUI
+        final int leftColumnX = 40;
+        final int rightColumnX = 220;
+
+        graphics.drawString("Move", leftColumnX, startY);
+        graphics.drawString("Rotate", leftColumnX, startY + lineHeight);
+        graphics.drawString("Hard Drop", leftColumnX, startY + lineHeight * 2);
+        
+        graphics.setFont(boldFont);
+        graphics.drawString("ARROWS", rightColumnX, startY);
+        graphics.drawString("UP ARROW", rightColumnX, startY + lineHeight);
+        graphics.drawString("CTRL", rightColumnX, startY + lineHeight * 2);
+
+        graphics.setFont(regularFont);
+        graphics.drawString("Pause / Unpause", leftColumnX, startY + lineHeight * 4);
+        graphics.drawString("New Game / To Menu", leftColumnX, startY + lineHeight * 5);
+        graphics.drawString("Mute All", leftColumnX, startY + lineHeight * 6);
+        graphics.drawString("Mute Music", leftColumnX, startY + lineHeight * 7);
+
+        graphics.setFont(boldFont);
+        graphics.drawString("P", rightColumnX, startY + lineHeight * 4);
+        graphics.drawString("SPACE", rightColumnX, startY + lineHeight * 5);
+        graphics.drawString("M", rightColumnX, startY + lineHeight * 6);
+        graphics.drawString("N", rightColumnX, startY + lineHeight * 7);
+
+        graphics.setFont(new Font("Monospaced", Font.BOLD, 22));
+        drawCenteredText(graphics, "PRESS C OR ESC TO RETURN", getComponent().getHeight() - 80);
     }
 }

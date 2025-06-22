@@ -12,7 +12,7 @@ import spypunk.tetris.ui.controller.command.TetrisControllerCommand;
 
 public interface TetrisControllerCommandCache {
 
-    public enum TetrisControllerCommandType {
+    enum TetrisControllerCommandType {
         LEFT,
         RIGHT,
         DOWN,
@@ -27,7 +27,8 @@ public interface TetrisControllerCommandCache {
         SHAPE_LOCKED,
         GAME_OVER,
         ROWS_COMPLETED,
-        TOGGLE_MUSIC_MUTE;
+        TOGGLE_MUSIC_MUTE,
+        SHOW_CONTROLS; // update
     }
 
     TetrisControllerCommand getTetrisControllerCommand(TetrisControllerCommandType tetrisControllerCommandType);

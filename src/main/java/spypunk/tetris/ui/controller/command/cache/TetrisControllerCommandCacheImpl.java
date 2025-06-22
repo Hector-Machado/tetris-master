@@ -65,6 +65,9 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
         tetrisControllerCommands.put(TetrisControllerCommandType.GAME_OVER, createGameOverCommand());
         tetrisControllerCommands.put(TetrisControllerCommandType.ROWS_COMPLETED, createRowsCompletedCommand());
         tetrisControllerCommands.put(TetrisControllerCommandType.TOGGLE_MUSIC_MUTE, createToggleMusicMuteCommand());
+        
+        // -> 1. REGISTRANDO NOSSO NOVO COMANDO
+        tetrisControllerCommands.put(TetrisControllerCommandType.SHOW_CONTROLS, createShowControlsCommand());
     }
 
     @Override
@@ -88,19 +91,16 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
         };
     }
 
-    // -> MÉTODO MODIFICADO AQUI
     private TetrisControllerCommand createPauseCommand() {
         return () -> {
             final State currentState = tetris.getState();
 
             if (State.RUNNING.equals(currentState)) {
-                // Pausa o jogo normalmente
                 tetrisService.pause();
                 soundService.pauseMusic();
             } else if (State.PAUSED.equals(currentState)) {
-                // Prepara para a contagem regressiva ao despausar
-                tetris.setBeepsPlayed(0); // Zera nosso contador de bipes
-                tetris.setState(State.COUNTDOWN); // Muda o estado para contagem
+                tetris.setBeepsPlayed(0);
+                tetris.setState(State.COUNTDOWN);
             }
         };
     }
@@ -146,6 +146,21 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
 
     private TetrisControllerCommand createToggleMusicMuteCommand() {
         return soundService::toggleMusicMute;
+    }
+    
+    // -> 2. CRIANDO A LÓGICA DO NOSSO NOVO COMANDO
+    private TetrisControllerCommand createShowControlsCommand() {
+        return () -> {
+            final State currentState = tetris.getState();
+
+            if (State.STOPPED.equals(currentState)) {
+                // Se está no menu, vai para a tela de controles
+                tetris.setState(State.CONTROLS);
+            } else if (State.CONTROLS.equals(currentState)) {
+                // Se já está nos controles, volta para o menu
+                tetris.setState(State.STOPPED);
+            }
+        };
     }
 
     private TetrisControllerCommand createOpenProjectURLCommand() {
