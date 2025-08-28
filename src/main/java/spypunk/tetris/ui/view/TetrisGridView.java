@@ -108,6 +108,13 @@ public class TetrisGridView extends AbstractTetrisView {
 
         SwingUtils.renderCenteredText(graphics, gridRectangle,
                 State.GAME_OVER.equals(state) ? tetrisGameOverText : tetrisPausedText);
+
+        // Se estiver em PAUSED, desenha a dica dos controles
+        if (State.PAUSED.equals(state)) {
+            graphics.setFont(new Font("Monospaced", Font.BOLD, 18));
+            drawCenteredText(graphics, PRESS_C_FOR_CONTROLS,
+                    gridRectangle.y + gridRectangle.height / 2 + 40); // 40 pixels abaixo do PAUSE
+        }
     }
 
     private void drawCenteredText(final Graphics2D graphics, final String text, final int y) {

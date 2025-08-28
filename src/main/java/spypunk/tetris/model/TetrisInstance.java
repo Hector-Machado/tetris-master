@@ -32,6 +32,8 @@ public class TetrisInstance {
 
     private State state = State.STOPPED;
 
+    private State previousState;
+
     private Shape currentShape;
 
     private Shape nextShape;
@@ -161,8 +163,21 @@ public class TetrisInstance {
         return state;
     }
 
-    public void setState(final State state) {
-        this.state = state;
+    public void setState(final State newState) {
+        if (newState == State.CONTROLS) {
+            previousState = state;
+        }
+        this.state = newState;
+    }
+
+    public State getPreviousState() {
+        return previousState;
+    }
+
+    public void returnFromControls() {
+        if (previousState != null) {
+            state = previousState;
+        }
     }
 
     public List<TetrisEvent> getTetrisEvents() {

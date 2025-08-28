@@ -192,6 +192,10 @@ public class Tetris {
         return tetrisInstance.getBeepsPlayed();
     }
 
+    public void returnFromControls() {
+        tetrisInstance.returnFromControls();
+    }
+
     public void setBeepsPlayed(final int beepsPlayed) {
         tetrisInstance.setBeepsPlayed(beepsPlayed);
     }

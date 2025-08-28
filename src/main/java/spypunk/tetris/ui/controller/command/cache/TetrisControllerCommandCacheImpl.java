@@ -153,12 +153,12 @@ public class TetrisControllerCommandCacheImpl implements TetrisControllerCommand
         return () -> {
             final State currentState = tetris.getState();
 
-            if (State.STOPPED.equals(currentState)) {
-                // Se está no menu, vai para a tela de controles
+            if (currentState == State.STOPPED || currentState == State.PAUSED) {
+                // Se estava no MENU ou PAUSED, vai para a tela de controles
                 tetris.setState(State.CONTROLS);
-            } else if (State.CONTROLS.equals(currentState)) {
-                // Se já está nos controles, volta para o menu
-                tetris.setState(State.STOPPED);
+            } else if (currentState == State.CONTROLS) {
+                // Sai da tela de controles e volta de onde veio
+                tetris.returnFromControls();
             }
         };
     }
