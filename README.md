@@ -1,7 +1,3 @@
-##  Melhorias Planejadas  
-- **Botão de Mute**:  
-  - Análise de Impacto (CII/CCI): [Link para Issue #X](https://github.com/arthurkonzen/tetris-master/issues/1). 
-
 # tetris - Just another Tetris™ clone ![alt tag](src/main/resources/img/icons/icon.png)
 
 [![Release](https://img.shields.io/badge/latest%20release-1.13.0-brightgreen.svg)](https://github.com/spypunk/tetris/releases/tag/1.13.0) [![Build Status](https://travis-ci.org/spypunk/tetris.svg?branch=master)](https://travis-ci.org/spypunk/tetris) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4d05e805b7ad406a82f10e7900fb497a)](https://www.codacy.com/app/spypunk/tetris?utm_source=github.com&utm_medium=referral&utm_content=spypunk/tetris&utm_campaign=Badge_Grade) [![Download tetris](https://img.shields.io/sourceforge/dt/spypunk-tetris.svg)](https://sourceforge.net/projects/spypunk-tetris/files/latest/download) [![License](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png)](http://www.wtfpl.net/)
@@ -16,11 +12,33 @@
 
 ![alt tag](img/screenshot_gameover.png)
 
-## How to build it ?
+## How to Build
 
-You will need a Java JDK 8+ and maven 3+.
+### Prerequisites
+- Java JDK 8 or higher
+- Apache Maven 3 or higher
 
-Execute **mvn clean package assembly:single** to build the release package.
+### Build the game
+
+#### If you want to build the release manually:
+
+```bash
+mvn clean package
+```
+
+### Run the game
+
+After building, you can start the game with the provided script:
+
+```bash
+./tetris
+```
+
+Alternatively, you can run the JAR directly:
+
+```bash
+java -jar target/tetris.jar
+```
 
 ## How to play ?
 
@@ -38,7 +56,9 @@ Execute **mvn clean package assembly:single** to build the release package.
 
 - P - Pause the current game
 
-- M - Mute sound
+- M - Mute all
+
+- N - Mute music
 
 - PAGE UP - Increase the volume
 
