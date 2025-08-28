@@ -1,0 +1,9 @@
+#!/bin/sh
+# Navega até a raiz do projeto (mesma pasta do pom.xml)
+cd "$(dirname "$0")"
+# Gera o JAR caso não exista
+if [ ! -f target/tetris.jar ]; then
+    mvn clean package
+fi
+# Roda o JAR
+java -jar target/tetris.jar
